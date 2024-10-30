@@ -5,8 +5,8 @@ from core.copy import *
 from core.merge import *
 
 def main():
-    source_path = "./datasets1"
-    dist_path = "./dist1"
+    source_path = "./datasets"
+    dist_path = "./dist"
     data_name = "archive.zip"
 
     init(source_path, dist_path)
