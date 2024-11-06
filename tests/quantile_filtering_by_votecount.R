@@ -1,5 +1,5 @@
 library(dplyr)
-# Kullanicilarin verdigi toplam oy say??s??
+# Kullanicilarin verdigi toplam oy sayisi
 user_ratings <- df %>%
   group_by(CustomerID) %>%
   summarise(vote_count = n())  
