@@ -13,21 +13,26 @@
 # Performance is evaluated using RMSE, and results are visualized.
 # ============================================================================
 
+if (!require(tidyverse))      install.packages("tidyverse")
+if (!require(data.table))     install.packages("data.table")
+if (!require(recommenderlab)) install.packages("recommenderlab")
+if (!require(ggplot2))        install.packages("ggplot2")
+
 # Load necessary libraries
-library(tidyverse)       # Data wrangling
-library(data.table)      # Fast data reading
-library(recommenderlab)  # Collaborative filtering
-library(ggplot2)         # Data visualization
+library(tidyverse)      # Data wrangling
+library(data.table)     # Fast data reading
+library(recommenderlab) # Collaborative filtering
+library(ggplot2)        # Data visualization
 
 # ----------------------------------------------------------------------------
 # Step 1: Load and Sample Datasets
 # ----------------------------------------------------------------------------
 
 # Load 30K random sample dataset
-netflix_30k <- fread("random_30k_sample.csv", select = c("MovieID", "CustomerID", "Rate"))
+netflix_30k <- fread("../data/random_30k_sample.csv", select = c("MovieID", "CustomerID", "Rate"))
 
 # Load full Netflix dataset to extract top 30% most active users
-netflix_full <- fread("combined_data_merged.csv", select = c("MovieID", "CustomerID", "Rate"))
+netflix_full <- fread("../dist/combined_data_merged.csv", select = c("MovieID", "CustomerID", "Rate"))
 
 # ----------------------------------------------------------------------------
 # Step 2: Prepare User-Item Matrix for 30K Sample
@@ -131,9 +136,11 @@ svd_top30_results <- train_evaluate_model(rating_matrix_top30, "SVDF", list(k = 
 # Store results in a data frame
 evaluation_results <- data.frame(
   Model = c("UBCF 30K", "UBCF Top 30%", "IBCF 30K", "IBCF Top 30%", "SVD 30K", "SVD Top 30%"),
-  RMSE = c(ubcf_30k_results["RMSE"], ubcf_top30_results["RMSE"],
-           ibcf_30k_results["RMSE"], ibcf_top30_results["RMSE"],
-           svd_30k_results["RMSE"], svd_top30_results["RMSE"])
+  RMSE = c(
+    ubcf_30k_results["RMSE"], ubcf_top30_results["RMSE"],
+    ibcf_30k_results["RMSE"], ibcf_top30_results["RMSE"],
+    svd_30k_results["RMSE"], svd_top30_results["RMSE"]
+  )
 )
 
 # Print results
@@ -150,8 +157,10 @@ evaluation_results_long <- evaluation_results %>%
 
 # Plot RMSE for each model
 ggplot(evaluation_results_long, aes(x = Model, y = Value, fill = Metric)) +
-  geom_bar(stat = "identity", position = "dodge") +
-  labs(title = "Performance Comparison (30K vs Top 30%)",
-       x = "Model",
-       y = "RMSE Value") +
-  theme_minimal()
+geom_bar(stat = "identity", position = "dodge") +
+labs(
+  title = "Performance Comparison (30K vs Top 30%)",
+  x = "Model",
+  y = "RMSE Value"
+) +
+theme_minimal()
